@@ -11,6 +11,21 @@
 	<div id='catName'></div>
 	<img id='catImage'>
 	<div id='clickCounter'></div>
+	<button id='adminButton' type="button">Admin</button>
+
+	<form id='adminForm' action="/action_page.php" target="_blank" visibility="hidden">
+		  cat name:<br>
+		  <input type="text" id="form_catName" value="">
+		  <br>
+		  image source:<br>
+		  <input type="text" id="form_imageSrc" value="">
+		  <br>
+		  click counter:<br>
+		  <input type="text" id="form_clickCounter" value="">
+		  <br><br>
+		  <input type="button" value="cancel">
+		  <input id='submitButton' type="button" value="Submit">
+	</form> 
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src='js/app.js'></script>

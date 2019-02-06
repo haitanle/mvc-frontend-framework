@@ -1,5 +1,6 @@
 
 var model = {
+	isAdminShowing: false,
 	currentCat: null,
 	catList : [
 		{name: 'Teddy', src: 'img/teddy.jpg', counter: 0},
@@ -15,6 +16,7 @@ var controller = {
 	init: function(){
 		listView.init();
 		catView.init();
+		adminView.init();
 
 		this.setCurrentCat(model.catList[0]);
 		catView.render();
@@ -35,6 +37,14 @@ var controller = {
 
 	setCurrentCat: function(cat){
 		model.currentCat = cat;
+	}, 
+
+	getAdminStatus: function(){
+		return model.isAdminShowing;
+	},
+
+	setAdminVisible: function(visibility){
+		model.isAdminShowing = visibility;
 	}
 };
 
@@ -95,6 +105,56 @@ var listView = {
 		});
 	}
 
+};
+
+
+var adminView = {
+	init: function(){
+		let adminButton = document.getElementById('adminButton');
+		let adminForm = document.getElementById('adminForm');
+
+		this.render();
+		this.update();
+
+	},
+
+	render: function(){
+		adminButton.addEventListener('click',(function(){
+
+			//get current model display/and toggle
+			return function(){
+				let isAdminShowing = controller.getAdminStatus();
+
+				console.log('click');
+
+				if (!isAdminShowing){
+					adminForm.style.visibility = 'visible';
+					controller.setAdminVisible(true);
+				}else{
+					adminForm.style.visibility = 'hidden';
+					controller.setAdminVisible(false);
+				}
+
+
+				let currentCat = controller.getCurrentCat();
+
+				document.getElementById('form_catName').value = currentCat.name;
+				document.getElementById('form_imageSrc').value = currentCat.src;
+				document.getElementById('form_clickCounter').value = currentCat.counter;
+
+
+			};
+
+		})());
+	},
+
+	update: function(){
+		let submitButton = document.getElementById('submitButton');
+
+		submitButton.addEventListener('click', function(){
+			console.log('submit button clicked');
+		});
+	}
 };
 
 controller.init();
