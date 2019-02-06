@@ -1,0 +1,19 @@
+.catCounter {
+	font-size: 74px;
+}
+
+.cat_container {
+    display: flex;
+    flex-wrap: wrap;
+    width: fit-content;
+}
+
+
+#catImage {
+	height: 230px;
+}
+
+
+.cat_box{
+	display: flex;
+}
