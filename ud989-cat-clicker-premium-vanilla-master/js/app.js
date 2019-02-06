@@ -1,148 +1,100 @@
 
-/* ======= Model ======= */
-
 var model = {
-    currentCat: null,
-    cats: [
-        {
-            clickCount : 0,
-            name : 'Tabby',
-            imgSrc : 'img/434164568_fea0ad4013_z.jpg',
-            imgAttribution : 'https://www.flickr.com/photos/bigtallguy/434164568'
-        },
-        {
-            clickCount : 0,
-            name : 'Tiger',
-            imgSrc : 'img/4154543904_6e2428c421_z.jpg',
-            imgAttribution : 'https://www.flickr.com/photos/xshamx/4154543904'
-        },
-        {
-            clickCount : 0,
-            name : 'Scaredy',
-            imgSrc : 'img/22252709_010df3379e_z.jpg',
-            imgAttribution : 'https://www.flickr.com/photos/kpjas/22252709'
-        },
-        {
-            clickCount : 0,
-            name : 'Shadow',
-            imgSrc : 'img/1413379559_412a540d29_z.jpg',
-            imgAttribution : 'https://www.flickr.com/photos/malfet/1413379559'
-        },
-        {
-            clickCount : 0,
-            name : 'Sleepy',
-            imgSrc : 'img/9648464288_2516b35537_z.jpg',
-            imgAttribution : 'https://www.flickr.com/photos/onesharp/9648464288'
-        }
-    ]
+	currentCat: null,
+	catList : [
+		{name: 'Teddy', src: 'img/teddy.jpg', counter: 0},
+		{name: 'Sugar', src: 'img/cat.jpeg', counter: 0},
+		{name: 'Danger', src:'img/danger.jpeg', counter: 0},
+		{name: 'Jumpy', src:'img/jumpy.jpg', counter: 0},
+		{name: 'Smoothness', src:'img/smoothness.jpg', counter: 0}
+	]
 };
 
 
-/* ======= Octopus ======= */
+var controller = {
+	init: function(){
+		listView.init();
+		catView.init();
 
-var octopus = {
+		this.setCurrentCat(model.catList[0]);
+		catView.render();
+	},
 
-    init: function() {
-        // set our current cat to the first one in the list
-        model.currentCat = model.cats[0];
+	incrementCounter: function(){
+		model.currentCat.counter++;
+		catView.render();
+	},
 
-        // tell our views to initialize
-        catListView.init();
-        catView.init();
-    },
+	getCurrentCat: function(){
+		return model.currentCat;
+	}, 
 
-    getCurrentCat: function() {
-        return model.currentCat;
-    },
+	getCatList: function(){
+		return model.catList;
+	},
 
-    getCats: function() {
-        return model.cats;
-    },
-
-    // set the currently-selected cat to the object passed in
-    setCurrentCat: function(cat) {
-        model.currentCat = cat;
-    },
-
-    // increments the counter for the currently-selected cat
-    incrementCounter: function() {
-        model.currentCat.clickCount++;
-        catView.render();
-    }
+	setCurrentCat: function(cat){
+		model.currentCat = cat;
+	}
 };
 
 
-/* ======= View ======= */
+
 
 var catView = {
+	init: function(){
+		let catName = document.getElementById('catName');
+		let catImage = document.getElementById('catImage');
+		let clickCounter = document.getElementById('clickCounter');
 
-    init: function() {
-        // store pointers to our DOM elements for easy access later
-        this.catElem = document.getElementById('cat');
-        this.catNameElem = document.getElementById('cat-name');
-        this.catImageElem = document.getElementById('cat-img');
-        this.countElem = document.getElementById('cat-count');
+		catImage.addEventListener('click', function(){
+			controller.incrementCounter();
+		});
+	},
 
-        // on click, increment the current cat's counter
-        this.catImageElem.addEventListener('click', function(){
-            octopus.incrementCounter();
-        });
+	render: function(){
+		//update DOM element with values from the current cat
+		let currentCat = controller.getCurrentCat();
 
-        // render this view (update the DOM elements with the right values)
-        this.render();
-    },
-
-    render: function() {
-        // update the DOM elements with values from the current cat
-        var currentCat = octopus.getCurrentCat();
-        this.countElem.textContent = currentCat.clickCount;
-        this.catNameElem.textContent = currentCat.name;
-        this.catImageElem.src = currentCat.imgSrc;
-    }
+		catName.innerText = currentCat.name;
+		catImage.src = currentCat.src;
+		clickCounter.innerText = currentCat.counter;
+	}
 };
 
-var catListView = {
 
-    init: function() {
-        // store the DOM element for easy access later
-        this.catListElem = document.getElementById('cat-list');
 
-        // render this view (update the DOM elements with the right values)
-        this.render();
-    },
+var listView = {
+	init: function(){
+		//display catList when initialize
+		catListElm = document.getElementById('catList');
 
-    render: function() {
-        var cat, elem, i;
-        // get the cats we'll be rendering from the octopus
-        var cats = octopus.getCats();
+		catList = controller.getCatList();
 
-        // empty the cat list
-        this.catListElem.innerHTML = '';
+		catList.forEach(function(cat){
 
-        // loop over the cats
-        for (i = 0; i < cats.length; i++) {
-            // this is the cat we're currently looping over
-            cat = cats[i];
+			//append to document
+			let button = document.createElement('button');
+			button.textContent = cat.name;
 
-            // make a new cat list item and set its text
-            elem = document.createElement('li');
-            elem.textContent = cat.name;
+			button.addEventListener('click', 
+				(function(cat){
+					//set to currentElement
+					//debugger;
+					return function(){
+						controller.setCurrentCat(cat);
 
-            // on click, setCurrentCat and render the catView
-            // (this uses our closure-in-a-loop trick to connect the value
-            //  of the cat variable to the click event function)
-            elem.addEventListener('click', (function(catCopy) {
-                return function() {
-                    octopus.setCurrentCat(catCopy);
-                    catView.render();
-                };
-            })(cat));
+						//display currentElement
+						catView.render();
+					};
+				}
+			)(cat));
 
-            // finally, add the element to the list
-            this.catListElem.appendChild(elem);
-        }
-    }
+			catListElm.appendChild(button);
+
+		});
+	}
+
 };
 
-// make it go!
-octopus.init();
+controller.init();
