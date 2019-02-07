@@ -16,15 +16,16 @@ var controller = {
 	init: function(){
 		listView.init();
 		catView.init();
-		adminView.init();
 
 		this.setCurrentCat(model.catList[0]);
 		catView.render();
+		adminView.init();
 	},
 
 	incrementCounter: function(){
 		model.currentCat.counter++;
 		catView.render();
+		adminView.render();
 	},
 
 	getCurrentCat: function(){
@@ -45,6 +46,17 @@ var controller = {
 
 	setAdminVisible: function(visibility){
 		model.isAdminShowing = visibility;
+	}, 
+
+	updateCurrenCat: function(updatedCat){
+
+	for(let i = 0; i < model.catList.length; i++){
+		if (model.catList[i] === model.currentCat){
+			model.catList.splice(i,1,updatedCat);
+			break;
+		}
+	}
+	model.currentCat = updatedCat;
 	}
 };
 
@@ -79,29 +91,28 @@ var listView = {
 		//display catList when initialize
 		catListElm = document.getElementById('catList');
 
+		catListElm.innerHTML = '';
+
 		catList = controller.getCatList();
 
 		catList.forEach(function(cat){
 
-			//append to document
 			let button = document.createElement('button');
 			button.textContent = cat.name;
 
 			button.addEventListener('click', 
 				(function(cat){
-					//set to currentElement
-					//debugger;
+
 					return function(){
 						controller.setCurrentCat(cat);
 
-						//display currentElement
 						catView.render();
+						adminView.render();
 					};
 				}
 			)(cat));
 
 			catListElm.appendChild(button);
-
 		});
 	}
 
@@ -113,47 +124,61 @@ var adminView = {
 		let adminButton = document.getElementById('adminButton');
 		let adminForm = document.getElementById('adminForm');
 
-		this.render();
-		this.update();
+		adminButton.addEventListener('click',function(){
 
+			let isAdminShowing = controller.getAdminStatus();
+			if (!isAdminShowing){
+				adminForm.style.visibility = 'visible';
+				controller.setAdminVisible(true);
+			}else{
+				adminForm.style.visibility = 'hidden';
+				controller.setAdminVisible(false);
+			}
+
+		});
+		this.render();
 	},
 
 	render: function(){
-		adminButton.addEventListener('click',(function(){
+		
+		let currentCat = controller.getCurrentCat();
 
-			//get current model display/and toggle
-			return function(){
-				let isAdminShowing = controller.getAdminStatus();
-
-				console.log('click');
-
-				if (!isAdminShowing){
-					adminForm.style.visibility = 'visible';
-					controller.setAdminVisible(true);
-				}else{
-					adminForm.style.visibility = 'hidden';
-					controller.setAdminVisible(false);
-				}
-
-
-				let currentCat = controller.getCurrentCat();
-
-				document.getElementById('form_catName').value = currentCat.name;
-				document.getElementById('form_imageSrc').value = currentCat.src;
-				document.getElementById('form_clickCounter').value = currentCat.counter;
-
-
-			};
-
-		})());
-	},
-
-	update: function(){
+		let nameField = document.getElementById('form_catName');
+		let imageSrcField = document.getElementById('form_imageSrc');
+		let counterField = document.getElementById('form_clickCounter');
 		let submitButton = document.getElementById('submitButton');
+		let cancelButton = document.getElementById('cancelButton');
 
-		submitButton.addEventListener('click', function(){
-			console.log('submit button clicked');
+
+		nameField.value = currentCat.name;
+		imageSrcField.value = currentCat.src;
+		counterField.value = currentCat.counter;
+
+		submitButton.addEventListener('click', (function(){
+			
+			return function(){
+
+				let updatedCat = {
+					name: nameField.value,
+					src: imageSrcField.value,
+					counter: counterField.value
+				};
+
+				controller.updateCurrenCat(updatedCat)
+
+				catView.render();
+				listView.init();
+				}
+		})());
+
+		cancelButton.addEventListener('click',function(){
+			controller.setAdminVisible(false);
+			let adminForm = document.getElementById('adminForm');
+			adminForm.style.visibility = 'hidden';
+			adminView.render();
 		});
+
+
 	}
 };
 
