@@ -1,4 +1,4 @@
-//leson9 - creating your own template function
+//leson9 - creating your own template function -
 /*
 EXAMPLE:
 in the example below `*(` is my default opening delimiter and `)*` is the default closing delimiter
