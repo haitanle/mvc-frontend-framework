@@ -3,19 +3,6 @@
 /*
 Create your own `template` function:
 
-• The `template` function should accept
-   1. A string of the template to parse
-   2. An `options` object for custom delimiters
-       - An `open` property for the open delimiter
-       - A `close` property for the close delimiter
-• The default delimiters the `template` function should use are:
-   1. `*(` for the opening delimiter
-   2. `)*` for the closing delimiter
-• The `template` function should return a function
-• The returned function should accept:
-   1. One argument for each placeholder in the original string
-   2. A number - this is how many times the string should be logged to the console
-
 EXAMPLE:
 in the example below `*(` is my default opening delimiter and `)*` is the default closing delimiter
 var string = "Hi, my name is Richard. And I *( emotion )* this *( thing )*!";
